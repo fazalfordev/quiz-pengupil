@@ -26,23 +26,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install selenium
 
-      - name: Install Chrome & WebDriver
+      - name: Install Firefox & GeckoDriver
         run: |
           sudo apt update
-          sudo apt purge -y google-chrome-stable || true  # ✅ Remove existing Chrome
-          sudo apt install -y wget unzip
+          sudo apt install -y firefox
           
-          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get install -f -y
-          
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
-          wget -q "https://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)/chromedriver_linux64.zip"
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
-          chmod +x /usr/local/bin/chromedriver
+          GECKODRIVER_VERSION=$(curl -sS https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+          wget -q "https://github.com/mozilla/geckodriver/releases/download/v$GECKODRIVER_VERSION/geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz"
+          tar -xzf geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz
+          sudo mv geckodriver /usr/local/bin/
+          chmod +x /usr/local/bin/geckodriver
 
-      - name: Verify Chrome Installation
-        run: google-chrome --version
+      - name: Verify Firefox Installation
+        run: firefox --version
 
       - name: Run Selenium Tests
         run: python -m unittest discover -s . -p "test_quiz_pengupil.py"
