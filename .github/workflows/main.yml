@@ -19,12 +19,12 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'  # Adjust as needed
+          python-version: '3.11.4'  # Adjust as needed
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install selenium unittest
+          pip install selenium  # ✅ Remove unittest (it's built-in)
 
       - name: Download Chrome & WebDriver
         run: |
